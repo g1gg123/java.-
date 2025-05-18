@@ -2,9 +2,10 @@ package Library.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 
 public class MainFrame extends JFrame{
-    public MainFrame(){
+    public MainFrame() throws SQLException{
         setTitle("图书管理系统");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
