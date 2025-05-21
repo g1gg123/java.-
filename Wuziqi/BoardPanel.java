@@ -48,9 +48,12 @@ public class BoardPanel extends JPanel{
         }
     }
 
-    //放置棋子
+    //放置棋子，1代表黑色，2代表白色
     public void placePiece(int row,int col,int color){
         board[row][col]=color;
         repaint();
+    }
+    public int[][] getBoard(){
+        return board;
     }
 }

@@ -54,7 +54,7 @@ public class PlayerManager {
     }
 
     //登陆
-    public static Player login(String username, String password){
+    public static synchronized Player login(String username, String password){
         if(!players.containsKey(username)){
             return null;
         }
@@ -67,7 +67,7 @@ public class PlayerManager {
     }
 
     //注册
-    public static Player register(String username,String password){
+    public static synchronized Player register(String username,String password){
         if(players.containsKey(username)){
             return null;
         }
@@ -77,7 +77,7 @@ public class PlayerManager {
     }
 
     //记录结果
-    public static void recordResult(Player winner,Player loser,boolean escape){
+    public static synchronized void recordResult(Player winner,Player loser,boolean escape){
         if(winner != null){
             winner.win_count++;
             winner.updateLevel();
