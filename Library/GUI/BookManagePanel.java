@@ -123,7 +123,7 @@ public class BookManagePanel extends JPanel{
 
         addButton.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 String isbn=isbnField.getText().trim();
                 String title=titleField.getText().trim();
                 String author=authorField.getText().trim();
@@ -132,7 +132,7 @@ public class BookManagePanel extends JPanel{
                 String publicationDate=publicationDateField.getText().trim();
                 String type=typeField.getText().trim();
 
-                if(isbn.isEmpty()||title.isEmpty()||author.isEmpty()||publisher.isEmpty()||edition.isEmpty()) {
+                if(isbn.isEmpty()||title.isEmpty()||author.isEmpty()||publisher.isEmpty()||edition.isEmpty()||type.isEmpty()){
                     JOptionPane.showMessageDialog(BookManagePanel.this,"不能含有空值!");
                     return;
                 }
@@ -141,8 +141,7 @@ public class BookManagePanel extends JPanel{
                 try{
                     editionNum=Integer.parseInt(edition);
 
-                }
-                catch(Exception ex){
+                }catch(Exception ex){
                     JOptionPane.showMessageDialog(BookManagePanel.this,"编辑次数输入错误!");
                     return;
                 }
@@ -170,7 +169,7 @@ public class BookManagePanel extends JPanel{
 
         deleteButton.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 String isbn=isbnField.getText().trim();
                 if(isbn.isEmpty()){
                     JOptionPane.showMessageDialog(BookManagePanel.this,"ISBN不允许为空!");
@@ -204,7 +203,7 @@ public class BookManagePanel extends JPanel{
 
         updateButton.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 String isbn=isbnField.getText().trim();
                 String title=titleField.getText().trim();
                 String author=authorField.getText().trim();
@@ -233,8 +232,7 @@ public class BookManagePanel extends JPanel{
                         JOptionPane.showMessageDialog(BookManagePanel.this,"编辑次数要为正整数!");
                         return;
                     }
-                }
-                catch(Exception ex){
+                }catch(Exception ex){
                     JOptionPane.showMessageDialog(BookManagePanel.this,"编辑次数要为整数!");
                     return;
                 }
@@ -253,19 +251,18 @@ public class BookManagePanel extends JPanel{
                             JOptionPane.showMessageDialog(BookManagePanel.this,"编辑次数要大于等于0!");
                             return;
                         }
-                    }
-                    catch(Exception ex){
+                    }catch(Exception ex){
                         JOptionPane.showMessageDialog(BookManagePanel.this,"编辑次数输入错误");
                         return;
                     }
                 }
                 try{
-                    title=title.isEmpty()?oriTitle:title;
-                    author=author.isEmpty()?oriAuthor:author;
-                    publisher=publisher.isEmpty()?oriPublisher:publisher;
-                    editionNum=edition.isEmpty()?oriEditionNum:editionNum;
-                    publicationDate=publicationDate.isEmpty()?oriPublicationDate:publicationDate;
-                    type=type.isEmpty()?oriType:type;
+                    title=title.isEmpty() ? oriTitle : title;
+                    author=author.isEmpty() ? oriAuthor : author;
+                    publisher=publisher.isEmpty() ? oriPublisher : publisher;
+                    editionNum=edition.isEmpty() ? oriEditionNum : editionNum;
+                    publicationDate=publicationDate.isEmpty() ? oriPublicationDate : publicationDate;
+                    type=type.isEmpty() ? oriType : type;
                     boolean updateSuccess=ba.updateBook(new Books(isbn,title,author,publisher,editionNum,publicationDate,type));
                     if(!updateSuccess){
                         JOptionPane.showMessageDialog(BookManagePanel.this,"更新失败!");
@@ -289,6 +286,7 @@ public class BookManagePanel extends JPanel{
         });
 
     }
+
     //刷新表格数据
     public void refreshTbale() throws SQLException{
         ArrayList<Books> books=ba.getAllbooks();

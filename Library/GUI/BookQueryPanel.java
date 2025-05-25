@@ -23,7 +23,7 @@ public class BookQueryPanel extends JPanel{
     private JTable resTable;
 
 
-    public BookQueryPanel() {
+    public BookQueryPanel(){
         ba=new BookAccess();
         setLayout(new BorderLayout());
 
@@ -86,9 +86,9 @@ public class BookQueryPanel extends JPanel{
         buttonPanel.add(jb);
         add(buttonPanel,BorderLayout.SOUTH);
 
-        jb.addActionListener(new ActionListener() {
+        jb.addActionListener(new ActionListener(){
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
                 try{
                     research();
                 }catch(SQLException ex){
@@ -99,6 +99,7 @@ public class BookQueryPanel extends JPanel{
         });
 
     }
+
     private void research() throws SQLException{
         String isbn=isbnFiled.getText().trim();
         String title=titleField.getText().trim();
@@ -114,21 +115,13 @@ public class BookQueryPanel extends JPanel{
         DefaultTableModel model=new DefaultTableModel(colunmnName,0){
             //设置不可编辑
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row,int column){
                 return false;
             }
         };
 
-        for(Books b:books){
-            Object[] rowData={
-                    b.getISBN(),
-                    b.getTitle(),
-                    b.getAuthors(),
-                    b.getPublisher(),
-                    b.getEditionNumber(),
-                    b.getPublicationDate(),
-                    b.getType()
-            };
+        for(Books b : books){
+            Object[] rowData={b.getISBN(),b.getTitle(),b.getAuthors(),b.getPublisher(),b.getEditionNumber(),b.getPublicationDate(),b.getType()};
             model.addRow(rowData);
         }
         resTable.setModel(model);

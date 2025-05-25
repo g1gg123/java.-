@@ -5,18 +5,19 @@ import Library.libDB.Record;
 import Library.libDB.Books;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 
 //实现借书与还书的逻辑
 public class RecordAccess{
     private ReaderAccess ra=new ReaderAccess();
-    private BookAccess  ba=new BookAccess();
+    private BookAccess ba=new BookAccess();
 
     /*
-    * 借出前判断读者与书籍是否存在
-    * 然后判断是否抵达读者借书上限
-    * 返回操作结果的信息
-    * */
+     * 借出前判断读者与书籍是否存在
+     * 然后判断是否抵达读者借书上限
+     * 返回操作结果的信息
+     * */
     public String borrowBook(String isbn,int readerId) throws SQLException{
         //检测读者与书籍是否存在
         Books book=ba.getBooksByISBN(isbn);
@@ -32,8 +33,7 @@ public class RecordAccess{
             if(rs.next()){
                 return "借书失败，该书籍已借出";
             }
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             e.printStackTrace();
             return "查询书籍状态失败";
         }
@@ -49,8 +49,7 @@ public class RecordAccess{
                     return "读者借书数量已经抵达上限! 上限:"+reader.getLimits();
                 }
             }
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             e.printStackTrace();
             return "查询该读者借书数量失败";
         }
@@ -66,16 +65,15 @@ public class RecordAccess{
             int affected=ps.executeUpdate();
             if(affected>0){return "借书成功";}
             else return "借书失败";
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             e.printStackTrace();
             return "借书过程中出现错误";
         }
     }
 
     /*
-    * 归还前判断判断读者与书籍是否存在
-    * */
+     * 归还前判断判断读者与书籍是否存在
+     * */
     public String returnBook(String isbn,int readerId) throws SQLException{
         //检测书籍是否存在
         Books book=ba.getBooksByISBN(isbn);
@@ -95,8 +93,7 @@ public class RecordAccess{
                 record.setRecordID(rs.getInt("RecordID"));
             }
             else return "未找到要归还的书籍";
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             e.printStackTrace();
             return "寻找过程中出现错误";
         }
@@ -111,11 +108,36 @@ public class RecordAccess{
             int affected=ps.executeUpdate();
             if(affected>0) return "归还成功";
             else return "归还失败";
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             e.printStackTrace();
             return "归还失败"+e.getMessage();
         }
     }
 
+    //根据读者id查询借阅记录
+    public ArrayList<Record> searchRecords(int readerId){
+        ArrayList<Record> list=new ArrayList<>();
+        String sql="select r.RecordID,r.ISBN,r.BorrowingDate,r.ReturnDate,b.Title as bookTitle from record r join books b on r.ISBN=b.ISBN where r.ReaderID=?";
+
+        try(Connection conn=DBini.getConnection();PreparedStatement ps=conn.prepareStatement(sql)){
+            ps.setInt(1,readerId);
+            ResultSet rs=ps.executeQuery();
+            while(rs.next()){
+                Record record=new Record();
+                record.setRecordID(rs.getInt("RecordID"));
+                record.setISBN(rs.getString("ISBN"));
+                Date borrowDate=rs.getDate("BorrowingDate");
+                record.setBorrowingDate(borrowDate!=null ? borrowDate.toString() : null);
+                Date returnDate=rs.getDate("ReturnDate");
+                record.setReturnDate(returnDate!=null ? returnDate.toString() : null);
+                record.setReaderID(readerId);
+                record.setBookTitle(rs.getString("bookTitle"));
+                //System.out.println(record.toString());
+                list.add(record);
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

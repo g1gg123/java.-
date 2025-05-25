@@ -1,8 +1,5 @@
 package Library;
 
-import Library.Access.BookAccess;
-import Library.Access.ReaderAccess;
-import Library.Access.RecordAccess;
 import Library.GUI.*;
 
 import java.sql.SQLException;

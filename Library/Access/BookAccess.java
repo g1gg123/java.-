@@ -11,7 +11,7 @@ import java.util.Date;
 
 
 //用于对Books进行增删改查操作
-public class BookAccess {
+public class BookAccess{
     /*
      * 根据给定的条件查询对应的书
      * 返回符合条件的书籍列表
@@ -67,7 +67,7 @@ public class BookAccess {
                 book.setPublisher(rs.getString("Publisher"));
                 book.setEditionNumber(rs.getInt("EditionNumber"));
                 Date date=rs.getDate("PublicationDate");
-                book.setPublicationDate(date!=null?date.toString():null);
+                book.setPublicationDate(date!=null ? date.toString() : null);
                 book.setType(rs.getString("Type"));
                 books.add(book);
             }
@@ -93,20 +93,19 @@ public class BookAccess {
                 book.setPublisher(rs.getString("Publisher"));
                 book.setEditionNumber(rs.getInt("EditionNumber"));
                 Date date=rs.getDate("PublicationDate");
-                book.setPublicationDate(date!=null?date.toString():null);
+                book.setPublicationDate(date!=null ? date.toString() : null);
                 book.setType(rs.getString("Type"));
                 books.add(book);
             }
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             e.printStackTrace();
         }
         return books;
     }
 
     /*
-    *根据主码（ISBN）查询书籍
-    * */
+     *根据主码（ISBN）查询书籍
+     * */
     public Books getBooksByISBN(String ISBN) throws SQLException{
         Books book=new Books();
         StringBuilder sql=new StringBuilder("select * from Books where ISBN=?");
@@ -120,19 +119,18 @@ public class BookAccess {
                 book.setPublisher(rs.getString("Publisher"));
                 book.setEditionNumber(rs.getInt("EditionNumber"));
                 Date date=rs.getDate("PublicationDate");
-                book.setPublicationDate(date!=null?date.toString():null);
+                book.setPublicationDate(date!=null ? date.toString() : null);
                 book.setType(rs.getString("Type"));
             }
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             System.out.println("查询失败:"+e.getMessage());
         }
         return book;
     }
 
     /*
-    * 插入书籍，成功返回true
-    * */
+     * 插入书籍，成功返回true
+     * */
     public boolean addBook(Books book) throws SQLException{
         String sql="insert into Books(ISBN,Title,Authors,Publisher,EditionNumber,PublicationDate,Type) values(?,?,?,?,?,?,?)";
         try(Connection conn=DBini.getConnection();PreparedStatement ps=conn.prepareStatement(sql)){
@@ -146,16 +144,15 @@ public class BookAccess {
             //根据影响的数量判断是否插入成功
             int affected=ps.executeUpdate();
             return affected>0;
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             System.out.println("插入失败: "+e.getMessage());
             return false;
         }
     }
 
     /*
-    * 更新书籍，成功返回true
-    * */
+     * 更新书籍，成功返回true
+     * */
     public boolean updateBook(Books book) throws SQLException{
         String sql="update Books set Title=?,Authors=?,Publisher=?,EditionNumber=?,PublicationDate=?,Type=? where ISBN=?";
         try(Connection conn=DBini.getConnection();PreparedStatement ps=conn.prepareStatement(sql)){
@@ -168,16 +165,15 @@ public class BookAccess {
             ps.setString(7,book.getISBN());
             int affected=ps.executeUpdate();
             return affected>0;
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             System.out.println("更新失败: "+e.getMessage());
             return false;
         }
     }
 
     /*
-    * 删除书籍
-    * */
+     * 删除书籍
+     * */
     public boolean deleteBook(Books book) throws SQLException{
         //检查书籍是否有归还
         String checkSql="select * from Record where ISBN=? and ReturnDate is NULL";
@@ -185,8 +181,7 @@ public class BookAccess {
             ps.setString(1,book.getISBN());
             ResultSet rs=ps.executeQuery();
             if(rs.next()){return false;}
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             System.out.println("检查失败: "+e.getMessage());
             return false;
         }
@@ -195,8 +190,7 @@ public class BookAccess {
             ps.setString(1,book.getISBN());
             int affected=ps.executeUpdate();
             return affected>0;
-        }
-        catch(SQLException e){
+        }catch(SQLException e){
             System.out.println("删除失败: "+e.getMessage());
             return false;
         }
