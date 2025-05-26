@@ -12,7 +12,7 @@ public class GameSession {
     private boolean p2Agree=false;
     private boolean start=false;
     private int currenColor=1;      //当前由黑色或是白色下
-    String[] colors={"黑","白"};
+    String[] colors={"1","2"};
     public GameSession(int size,ClientThread p1,ClientThread p2){
         board=new int[size][size];
         this.p1=p1;
@@ -67,6 +67,7 @@ public class GameSession {
 
         //广播信息到所有玩家
         String msg="落子位置 "+row+" "+col+" "+colors[color-1];
+        board[row][col]=color;
         p1.send(msg);
         p2.send(msg);
         //处理落子是否导致游戏结束
@@ -105,16 +106,16 @@ public class GameSession {
         Player winner=quitterOpp.getPlayer();
         Player loser=quitter.getPlayer();
         PlayerManager.recordResult(winner,loser,true);
-        String resMsg=(quitter==p1?"白方胜利":"黑方胜利");
+        String resMsg=(quitter==p1?"游戏结束 白方胜利":"游戏结束 黑方胜利");
         quitterOpp.send(resMsg);
         try{
             p1.socket.close();
         }
-        catch(IOException e){}
+        catch(IOException ignored){}
         try{
             p2.socket.close();
         }
-        catch(IOException e){}
+        catch(IOException ignored){}
         start=false;
     }
 

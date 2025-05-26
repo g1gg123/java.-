@@ -56,7 +56,7 @@ public class Client{
                     JOptionPane.showMessageDialog(null,"与服务器断开连接");
                     System.exit(0);
                 }
-                if(response.startsWith("登陆成功")||response.startsWith("注册成功")){
+                if(response.startsWith("登录成功")||response.startsWith("注册成功")){
                     loggedIn=true;
                     JOptionPane.showMessageDialog(null,"登录成功:"+username);
                 }
@@ -148,7 +148,7 @@ public class Client{
                                 infoLabel.setText("轮到你落子");
                             }
                         }
-                        else if(parts.equals("游戏结束")){
+                        else if(parts[0].equals("游戏结束")){
                             gameActive=false;
                             myTurn=false;
                             String winner=parts[1];

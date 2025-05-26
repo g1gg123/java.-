@@ -54,7 +54,7 @@ public class ClientThread extends Thread {
                         Player p=PlayerManager.login(username,password);
                         if(p!=null){
                             player=p;
-                            send("登录成功");
+                            send("登录成功 "+username+" "+password);
                             break;
                         }
                         else{
@@ -69,7 +69,7 @@ public class ClientThread extends Thread {
                         Player p=PlayerManager.register(username,password);
                         if(p!=null){
                             player=p;
-                            send("注册成功");
+                            send("注册成功 "+username+" "+password);
                             break;
                         }
                         else{
@@ -101,7 +101,7 @@ public class ClientThread extends Thread {
                         catch(NumberFormatException e){}
                     }
                 }
-                else if(parts.equals("退出")){
+                else if(parts[0].equals("退出")){
                     if(game!=null){
                         game.processQuit(this);
                     }

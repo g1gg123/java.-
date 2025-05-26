@@ -90,6 +90,7 @@ public class PlayerManager {
             loser.lose_count++;
             loser.updateLevel();
         }
+        saveData();
     }
     public static void setPlayers(Player player){
         players.put(player.username,player);
