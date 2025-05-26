@@ -73,6 +73,7 @@ public class PlayerManager {
         }
         Player newPlayer = new Player(username,password);
         players.put(username, newPlayer);
+        saveData();
         return newPlayer;
     }
 

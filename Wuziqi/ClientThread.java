@@ -21,7 +21,7 @@ public class ClientThread extends Thread {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         } catch (IOException e) {
-            System.out.println("通信错误: " + e.getMessage());
+            System.out.println("通信错误:" + e.getMessage());
         }
     }
 
@@ -33,7 +33,7 @@ public class ClientThread extends Thread {
             out.newLine();
             out.flush();
         }catch(IOException e){
-            System.out.println("消息传输失败"+e.getMessage());
+            System.out.println("消息传输失败:"+e.getMessage());
         }
     }
 
@@ -43,11 +43,82 @@ public class ClientThread extends Thread {
             String line;
             while(true){
                 line=in.readLine();
-                if(line==null){return;}
                 System.out.println(line);
+                if(line==null){return;}
+                String[] parts=line.split(" ");     //分割消息，便于处理
+                //处理登录和注册请求
+                if(parts[0].equals("玩家登录")){
+                    if(parts.length>=3){
+                        String username=parts[1];
+                        String password=parts[2];
+                        Player p=PlayerManager.login(username,password);
+                        if(p!=null){
+                            player=p;
+                            send("登录成功");
+                            break;
+                        }
+                        else{
+                            send("登录失败");
+                        }
+                    }
+                }
+                else if(parts[0].equals("玩家注册")){
+                    if(parts.length>=3){
+                        String username=parts[1];
+                        String password=parts[2];
+                        Player p=PlayerManager.register(username,password);
+                        if(p!=null){
+                            player=p;
+                            send("注册成功");
+                            break;
+                        }
+                        else{
+                            send("注册失败");
+                        }
+                    }
+                }
             }
-        }
-        catch(IOException e){}finally{
+            Server.matchPlayer(this);
+            while((line=in.readLine())!=null){
+                String[] parts=line.split(" ");
+                if(parts[0].equals("同意")){
+                    if(game!=null){
+                        game.decision(this,true);
+                    }
+                }
+                else if(parts[0].equals("拒绝")){
+                    if(game!=null){
+                        game.decision(this,false);
+                    }
+                }
+                else if(parts[0].equals("落子位置")){
+                    if(game!=null&&parts.length>=3){
+                        try{
+                            int r=Integer.parseInt(parts[1]);
+                            int c=Integer.parseInt(parts[2]);
+                            game.processMove(this,r,c);
+                        }
+                        catch(NumberFormatException e){}
+                    }
+                }
+                else if(parts.equals("退出")){
+                    if(game!=null){
+                        game.processQuit(this);
+                    }
+                    else{
+                        Server.removeWaitingPlayer(this);
+                    }
+                    break;
+                }
+            }
+        }catch(IOException e){
+            if(game!=null){
+                game.processQuit(this);
+            }
+            else{
+                Server.removeWaitingPlayer(this);
+            }
+        }finally{
             try{
                 if(in!=null) in.close();
                 if(out!=null) out.close();

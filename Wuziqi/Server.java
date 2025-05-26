@@ -27,20 +27,9 @@ public class Server{
                 System.out.println("连接来自:"+socket.getRemoteSocketAddress());
                 ClientThread ct=new ClientThread(socket);
                 ct.start();
-            }catch (SocketException se) {    //处理accept抛出的异常
-                if ("Socket closed".equalsIgnoreCase(se.getMessage())) {
-                    System.out.println("服务器被提前关闭");
-                    break;
-                }
             }catch(IOException e){
                 System.out.println("服务器异常:"+e.getMessage());
-                throw new RuntimeException(e);
-            }finally{
-                try{
-                    if(ss!=null){ss.close();}
-                    if(waitingPlayers!=null){waitingPlayers.clear();}
-                }
-                catch(IOException e){}
+                break;
             }
         }
     }
@@ -51,7 +40,7 @@ public class Server{
             ct.setWaiting(true);
         }
         else{
-            ClientThread opp=waitingPlayers.remove(0);      //对手
+            ClientThread opp=waitingPlayers.removeFirst();      //对手
             opp.setWaiting(false);
             GameSession game=new GameSession(15,opp,ct);
             opp.setGame(game);

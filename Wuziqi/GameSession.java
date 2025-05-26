@@ -44,8 +44,8 @@ public class GameSession {
                 p2Agree=true;
             }
             if(p1Agree&&p2Agree){
-                p1.send("作为黑方开始");
-                p2.send("作为白方开始");
+                p1.send("游戏开始 黑方");
+                p2.send("游戏开始 白方");
                 start=true;
                 currenColor=1;
             }
@@ -75,7 +75,7 @@ public class GameSession {
             Player loser=(p==p1?p2.getPlayer():p1.getPlayer());
             //更新信息
             PlayerManager.recordResult(winner,loser,false);
-            String resMsg=color==1?"黑方胜利":"白方胜利";
+            String resMsg=color==1?"游戏结束 黑方胜利":"游戏结束 白方胜利";
             p1.send(resMsg);
             p2.send(resMsg);
             try{
@@ -94,7 +94,28 @@ public class GameSession {
 
     //处理玩家中途退出
     public synchronized void processQuit(ClientThread quitter){
-
+        //游戏没开始前有人退出
+        if(!start){
+            decision(quitter,false);
+            return;
+        }
+        //游戏中途有人退出
+        //退出者的对手
+        ClientThread quitterOpp=(quitter==p1?p2:p1);
+        Player winner=quitterOpp.getPlayer();
+        Player loser=quitter.getPlayer();
+        PlayerManager.recordResult(winner,loser,true);
+        String resMsg=(quitter==p1?"白方胜利":"黑方胜利");
+        quitterOpp.send(resMsg);
+        try{
+            p1.socket.close();
+        }
+        catch(IOException e){}
+        try{
+            p2.socket.close();
+        }
+        catch(IOException e){}
+        start=false;
     }
 
 }

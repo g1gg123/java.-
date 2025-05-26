@@ -2,6 +2,8 @@ package Wuziqi;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 //绘制棋盘以及处理下棋的逻辑
 public class BoardPanel extends JPanel{
@@ -9,9 +11,33 @@ public class BoardPanel extends JPanel{
     private static final int CELL_SIZE=40;     //格子大小
     private static final int MARGIN=20;        //棋盘边缘与界面边缘的间隔
     private int[][] board=new int[GRID_SIZE][GRID_SIZE];
+    private Client client;
 
-    public BoardPanel(){
+    public BoardPanel(Client client){
+        this.client = client;
         setPreferredSize(new Dimension(MARGIN*2+CELL_SIZE*(GRID_SIZE-1),MARGIN*2+CELL_SIZE*(GRID_SIZE-1)));
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(!client.getMyTurn()||!client.getGameActive()){
+                    return;
+                }
+                int x=e.getX();
+                int y=e.getY();
+
+                int col=Math.round((x-MARGIN)/(float) CELL_SIZE);
+                int row=Math.round((y-MARGIN)/(float) CELL_SIZE);
+                if(row<0||row>=GRID_SIZE||col<0||col>=GRID_SIZE){
+                    return;
+                }
+                if(board[row][col]!=0){
+                    return;
+                }
+                client.send("落子位置 "+row+" "+col);
+                client.setMyTurn(false);
+            }
+        });
+
     }
 
     //用于绘制棋盘上的棋子而不影响其他组件
